@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Oct  5 17:31:14 2018
-
 @author: qinyuxin & hanmufu
 """
 
@@ -55,6 +54,45 @@ def pingfanggen(X, Y):
 
 
 '''
+已知X Y, 计算出波浪面的Z
+para:
+    X 所有采样点的x坐标的列表，np.array类型
+    Y 所有采样点的y坐标的列表，np.array类型
+'''
+
+def WavySurface(X, Y):
+    temp = [0.0] * len(X[0])
+    Z = []
+    for i in range(len(X)):
+        Z.append(temp)
+    Z = np.array(Z)
+    for i in range(len(X)):
+        for j in range(len(X[i])):
+            Z[i][j] = 4 * np.sin(0.5 * Y[i][j]) + 8 + random.uniform(-0.7, 0.7)
+    return Z
+
+
+'''
+随机凹凸不平平面
+para:
+    X 所有采样点的x坐标的列表，np.array类型
+    Y 所有采样点的y坐标的列表，np.array类型
+'''
+
+
+def RandomSurface(X, Y):
+    temp = [0.0] * len(X[0])
+    Z = []
+    for i in range(len(X)):
+        Z.append(temp)
+    Z = np.array(Z)
+    for i in range(len(X)):
+        for j in range(len(X[i])):
+            Z[i][j] = random.uniform(8, 12)
+    return Z
+
+
+'''
 主函数
 1. 模拟垃圾状况，并绘制示意图
 2. 计算垃圾真实体积，以便之后计算拟真率
@@ -75,6 +113,10 @@ def main(funName):
         Z = pingfanggen(X, Y)
     elif funName == 'paowumian':
         Z = paowumian(X, Y)
+    elif funName == 'WavySurface':
+        Z = WavySurface(X, Y)
+    elif funName == 'RandomSurface':
+        Z = RandomSurface(X, Y)
     # rstride、csride分别为两个方向上的跨度，跨度越大越宽松，越小越密集；cmap设置为彩虹样式
     ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=plt.get_cmap('rainbow'))  # 彩虹
     # 等高线图contour---细线；contourf---连在一起的宽线条 ；zdir设置从哪个坐标轴压下去;  offset=n,表示等高线图的位置在n
@@ -102,21 +144,25 @@ para:
 
 
 def sample1(funName, trueVol):
-    sampleX1 = np.array([0])
-    sampleY1 = np.array([0])
-    sampleX1, sampleY1 = np.meshgrid(sampleX1, sampleY1)
+    sampleX = np.array([0])
+    sampleY = np.array([0])
+    sampleX, sampleY = np.meshgrid(sampleX, sampleY)
     if funName == 'pingfanggen':
-        sampleZ1 = pingfanggen(sampleX1, sampleY1)
+        sampleZ = pingfanggen(sampleX, sampleY)
     elif funName == 'paowumian':
-        sampleZ1 = paowumian(sampleX1, sampleY1)
+        sampleZ = paowumian(sampleX, sampleY)
+    elif funName == 'WavySurface':
+        sampleZ = WavySurface(sampleX, sampleY)
+    elif funName == 'RandomSurface':
+        sampleZ = RandomSurface(sampleX, sampleY)
     else:
         print("ERROR: 所输入方程名不存在")
-    sampledS1 = 24 ** 2 / 1 ** 2
-    sampleVol1 = 0
-    for i in range(len(sampleZ1)):
-        for j in range(len(sampleZ1[i])):
-            sampleVol1 += (sampleZ1[i][j] + 12) * sampledS1
-    print("一个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol1 / trueVol * 100), 100 - float(sampleVol1 / trueVol * 100)))
+    sampledS = 24 ** 2 / 1 ** 2
+    sampleVol = 0
+    for i in range(len(sampleZ)):
+        for j in range(len(sampleZ[i])):
+            sampleVol += (sampleZ[i][j] + 12) * sampledS
+    print("一个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol / trueVol * 100), 100 - float(sampleVol / trueVol * 100)))
 
 
 '''
@@ -128,21 +174,25 @@ para:
 
 
 def sample4(funName, trueVol):
-    sampleX2 = np.array([-4, 4])
-    sampleY2 = np.array([-4, 4])
-    sampleX2, sampleY2 = np.meshgrid(sampleX2, sampleY2)
+    sampleX = np.array([-4, 4])
+    sampleY = np.array([-4, 4])
+    sampleX, sampleY = np.meshgrid(sampleX, sampleY)
     if funName == 'pingfanggen':
-        sampleZ2 = pingfanggen(sampleX2, sampleY2)
+        sampleZ = pingfanggen(sampleX, sampleY)
     elif funName == 'paowumian':
-        sampleZ2 = paowumian(sampleX2, sampleY2)
+        sampleZ = paowumian(sampleX, sampleY)
+    elif funName == 'WavySurface':
+        sampleZ = WavySurface(sampleX, sampleY)
+    elif funName == 'RandomSurface':
+        sampleZ = RandomSurface(sampleX, sampleY)
     else:
         print("ERROR: 所输入方程名不存在")
-    sampledS2 = 24 ** 2 / 2 ** 2
-    sampleVol2 = 0
-    for i in range(len(sampleZ2)):
-        for j in range(len(sampleZ2[i])):
-            sampleVol2 += (sampleZ2[i][j] + 12) * sampledS2
-    print("四个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol2 / trueVol * 100), 100 - float(sampleVol2 / trueVol * 100)))
+    sampledS = 24 ** 2 / 2 ** 2
+    sampleVol = 0
+    for i in range(len(sampleZ)):
+        for j in range(len(sampleZ[i])):
+            sampleVol += (sampleZ[i][j] + 12) * sampledS
+    print("四个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol / trueVol * 100), 100 - float(sampleVol / trueVol * 100)))
 
 
 '''
@@ -154,21 +204,25 @@ para:
 
 
 def sample9(funName, trueVol):
-    sampleX3 = np.array([-6, 0, 6])
-    sampleY3 = np.array([-6, 0, 6])
-    sampleX3, sampleY3 = np.meshgrid(sampleX3, sampleY3)
+    sampleX = np.array([-6, 0, 6])
+    sampleY = np.array([-6, 0, 6])
+    sampleX, sampleY = np.meshgrid(sampleX, sampleY)
     if funName == 'pingfanggen':
-        sampleZ3 = pingfanggen(sampleX3, sampleY3)
+        sampleZ = pingfanggen(sampleX, sampleY)
     elif funName == 'paowumian':
-        sampleZ3 = paowumian(sampleX3, sampleY3)
+        sampleZ = paowumian(sampleX, sampleY)
+    elif funName == 'WavySurface':
+        sampleZ = WavySurface(sampleX, sampleY)
+    elif funName == 'RandomSurface':
+        sampleZ = RandomSurface(sampleX, sampleY)
     else:
         print("ERROR: 所输入方程名不存在")
-    sampledS3 = 24 ** 2 / 3 ** 2
-    sampleVol3 = 0
-    for i in range(len(sampleZ3)):
-        for j in range(len(sampleZ3[i])):
-            sampleVol3 += (sampleZ3[i][j] + 12) * sampledS3
-    print("九个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol3 / trueVol * 100), 100 - float(sampleVol3 / trueVol * 100)))
+    sampledS = 24 ** 2 / 3 ** 2
+    sampleVol = 0
+    for i in range(len(sampleZ)):
+        for j in range(len(sampleZ[i])):
+            sampleVol += (sampleZ[i][j] + 12) * sampledS
+    print("九个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol / trueVol * 100), 100 - float(sampleVol / trueVol * 100)))
 
 
 '''
@@ -180,21 +234,25 @@ para:
 
 
 def sample16(funName, trueVol):
-    sampleX4 = np.array([-7.2, -2.4, 2.4, 7.2])
-    sampleY4 = np.array([-7.2, -2.4, 2.4, 7.2])
-    sampleX4, sampleY4 = np.meshgrid(sampleX4, sampleY4)
+    sampleX = np.array([-7.2, -2.4, 2.4, 7.2])
+    sampleY = np.array([-7.2, -2.4, 2.4, 7.2])
+    sampleX, sampleY = np.meshgrid(sampleX, sampleY)
     if funName == 'pingfanggen':
-        sampleZ4 = pingfanggen(sampleX4, sampleY4)
+        sampleZ = pingfanggen(sampleX, sampleY)
     elif funName == 'paowumian':
-        sampleZ4 = paowumian(sampleX4, sampleY4)
+        sampleZ = paowumian(sampleX, sampleY)
+    elif funName == 'WavySurface':
+        sampleZ = WavySurface(sampleX, sampleY)
+    elif funName == 'RandomSurface':
+        sampleZ = RandomSurface(sampleX, sampleY)
     else:
         print("ERROR: 所输入方程名不存在")
-    sampledS4 = 24 ** 2 / 4 ** 2
-    sampleVol4 = 0
-    for i in range(len(sampleZ4)):
-        for j in range(len(sampleZ4[i])):
-            sampleVol4 += (sampleZ4[i][j] + 12) * sampledS4
-    print("十六个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol4 / trueVol * 100), 100 - float(sampleVol4 / trueVol * 100)))
+    sampledS = 24 ** 2 / 4 ** 2
+    sampleVol = 0
+    for i in range(len(sampleZ)):
+        for j in range(len(sampleZ[i])):
+            sampleVol += (sampleZ[i][j] + 12) * sampledS
+    print("十六个采样点的拟真率为%.3f%%, 差为%.3f%%" % (float(sampleVol / trueVol * 100), 100 - float(sampleVol / trueVol * 100)))
 
 
 trueVol = main('pingfanggen')
@@ -209,3 +267,14 @@ sample4('paowumian', trueVol)
 sample9('paowumian', trueVol)
 sample16('paowumian', trueVol)
 
+main('WavySurface')
+sample1('WavySurface', trueVol)
+sample4('WavySurface', trueVol)
+sample9('WavySurface', trueVol)
+sample16('WavySurface', trueVol)
+
+main('RandomSurface')
+sample1('RandomSurface', trueVol)
+sample4('RandomSurface', trueVol)
+sample9('RandomSurface', trueVol)
+sample16('RandomSurface', trueVol)
